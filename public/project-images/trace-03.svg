@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="abstract project trace">
+  <defs>
+    <radialGradient id="c" cx="52%" cy="50%" r="70%">
+      <stop offset="0" stop-color="#f4f3ee"/>
+      <stop offset="0.38" stop-color="#8fa8dc"/>
+      <stop offset="1" stop-color="#002899"/>
+    </radialGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 0.18"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+  <rect width="1200" height="675" fill="#d3d5d8"/>
+  <rect width="1200" height="675" fill="url(#c)" opacity="0.88"/>
+  <g opacity="0.38">
+    <rect x="435" y="92" width="8" height="490" rx="4" fill="#ffffff"/>
+    <rect x="560" y="78" width="8" height="520" rx="4" fill="#ffffff"/>
+    <rect x="685" y="110" width="8" height="460" rx="4" fill="#ffffff"/>
+    <rect x="810" y="88" width="8" height="500" rx="4" fill="#ffffff"/>
+  </g>
+  <ellipse cx="250" cy="415" rx="260" ry="130" fill="#f6f4ed" opacity="0.5"/>
+  <rect width="1200" height="675" filter="url(#grain)"/>
+</svg>

@@ -1,0 +1,286 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #000000;
+  background: #c7c8c5;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #c7c8c5;
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+::selection {
+  background: rgba(0, 0, 0, 0.16);
+}
+
+@layer components {
+  .flowing-bg {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 21% 28%, rgba(247, 246, 239, 0.96), transparent 31%),
+      radial-gradient(ellipse at 62% 34%, rgba(0, 47, 174, 0.88), transparent 27%),
+      radial-gradient(ellipse at 78% 76%, rgba(0, 26, 132, 0.72), transparent 35%),
+      radial-gradient(ellipse at 30% 84%, rgba(236, 241, 249, 0.76), transparent 29%),
+      linear-gradient(135deg, #c7c8c5 0%, #f0efe9 45%, #b8c4d3 100%);
+    background-size: 185% 185%;
+    animation: base-gradient-shift 12s ease-in-out infinite alternate;
+  }
+
+  .flowing-bg::before,
+  .flowing-bg::after {
+    content: '';
+    position: fixed;
+    inset: -24%;
+    z-index: -1;
+    pointer-events: none;
+    filter: blur(42px);
+    will-change: transform;
+  }
+
+  .flowing-bg::before {
+    background:
+      radial-gradient(ellipse at 18% 50%, rgba(255, 255, 244, 0.86), transparent 25%),
+      radial-gradient(ellipse at 54% 36%, rgba(0, 44, 170, 0.86), transparent 24%),
+      radial-gradient(ellipse at 82% 74%, rgba(0, 24, 118, 0.66), transparent 26%);
+    animation: gradient-flow-a 9s ease-in-out infinite alternate;
+  }
+
+  .flowing-bg::after {
+    background:
+      radial-gradient(ellipse at 14% 74%, rgba(0, 41, 156, 0.44), transparent 28%),
+      radial-gradient(ellipse at 84% 24%, rgba(244, 244, 238, 0.7), transparent 24%),
+      radial-gradient(ellipse at 48% 62%, rgba(255, 255, 248, 0.52), transparent 22%);
+    animation: gradient-flow-b 10s ease-in-out infinite alternate;
+    mix-blend-mode: multiply;
+  }
+
+  .flowing-bg > * {
+    position: relative;
+  }
+
+  .flowing-bg > *::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.24;
+    background-image:
+      radial-gradient(circle, rgba(0, 0, 0, 0.28) 0.55px, transparent 0.85px),
+      radial-gradient(circle, rgba(255, 255, 255, 0.38) 0.5px, transparent 0.8px);
+    background-position: 0 0, 7px 11px;
+    background-size: 4px 4px, 5px 5px;
+  }
+
+  .site-header {
+    @apply sticky top-0 z-20 px-3 pb-5 pt-2 md:px-4;
+  }
+
+  .brand-title {
+    @apply inline-flex items-baseline gap-2 justify-self-start text-2xl font-black leading-none text-ink transition hover:opacity-60;
+  }
+
+  .brand-title-en {
+    @apply font-sans text-[10px] font-bold tracking-[0.08em] text-slate;
+  }
+
+  .nav-link {
+    @apply text-sm font-normal text-ink transition hover:opacity-55;
+  }
+
+  .home-hero {
+    @apply flex min-h-[72vh] items-center px-3 pb-12 pt-10 md:min-h-[76vh] md:px-4;
+  }
+
+  .home-stage {
+    @apply w-full;
+  }
+
+  .home-copy {
+    @apply w-full;
+  }
+
+  .home-title {
+    @apply grid w-full grid-cols-[auto_1fr] items-end gap-x-5 text-[4.2rem] font-black leading-none tracking-[-0.06em] text-ink md:text-[5.9rem] lg:text-[6.8rem];
+    text-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .home-title-en {
+    @apply justify-self-end pb-1 font-sans text-3xl font-black tracking-[0.04em] text-ink md:pb-2 md:text-5xl lg:text-6xl;
+    text-shadow: none;
+  }
+
+  .home-subtitle {
+    @apply mt-7 max-w-[28rem] text-left text-base font-bold leading-relaxed tracking-[0.03em] text-ink md:text-lg;
+  }
+
+  .home-subtitle-en {
+    @apply mt-1 font-sans text-[11px] font-bold tracking-[0.04em] text-slate md:text-xs;
+  }
+
+  .home-actions {
+    @apply mt-12 flex flex-col gap-5 sm:flex-row;
+  }
+
+  .home-button {
+    @apply inline-flex min-w-56 items-center justify-between rounded-[1.4rem] border px-8 py-5 text-xl font-bold whitespace-nowrap transition hover:-translate-y-0.5;
+  }
+
+  .home-button-primary {
+    @apply border-white/35 bg-[#06102a]/90 text-white shadow-card backdrop-blur-md hover:bg-[#10256e];
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 18px 44px rgba(0, 23, 95, 0.28);
+  }
+
+  .home-button-secondary {
+    @apply border-white/50 text-ink backdrop-blur-md hover:border-white/80;
+    background: rgba(255, 255, 255, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 16px 38px rgba(0, 23, 95, 0.14);
+  }
+
+  .home-button-secondary:hover {
+    background: rgba(255, 255, 255, 0.38);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-olive disabled:translate-y-0 disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-ink bg-paper px-5 py-3 text-sm font-bold text-ink transition hover:-translate-y-0.5 hover:bg-accentSoft disabled:translate-y-0 disabled:opacity-50;
+  }
+
+  .input-field {
+    @apply w-full rounded-2xl border border-ink/10 bg-paper/80 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-slate/60 focus:border-ink/40 focus:bg-white;
+  }
+
+  .dimension-chip {
+    @apply flex items-center justify-between gap-3 rounded-2xl border border-ink/10 bg-paper/75 px-4 py-3 text-left text-sm text-ink transition hover:-translate-y-0.5 hover:border-ink/40 hover:bg-white;
+  }
+
+  .dimension-chip-selected {
+    @apply border-accentDeep bg-accentSoft text-ink hover:bg-accentSoft;
+  }
+
+  .project-image-frame {
+    @apply relative overflow-hidden rounded-[22px] border border-white/50 bg-shell shadow-sticker;
+  }
+
+  .project-image-placeholder {
+    @apply h-full w-full;
+    background:
+      radial-gradient(ellipse at 24% 35%, rgba(246, 245, 238, 0.92), transparent 28%),
+      radial-gradient(ellipse at 70% 42%, rgba(0, 48, 168, 0.74), transparent 32%),
+      radial-gradient(ellipse at 78% 82%, rgba(0, 26, 132, 0.58), transparent 36%),
+      linear-gradient(135deg, #d8ddea 0%, #f4f3ee 44%, #9eb0d4 100%);
+  }
+
+  .project-image-placeholder-1 {
+    background:
+      radial-gradient(ellipse at 18% 72%, rgba(0, 48, 168, 0.48), transparent 34%),
+      radial-gradient(ellipse at 78% 25%, rgba(246, 245, 238, 0.88), transparent 29%),
+      linear-gradient(135deg, #cbd4e7 0%, #f4f3ee 48%, #002899 100%);
+  }
+
+  .project-image-placeholder-2 {
+    background:
+      radial-gradient(ellipse at 50% 44%, rgba(0, 48, 168, 0.74), transparent 34%),
+      radial-gradient(ellipse at 18% 55%, rgba(246, 245, 238, 0.76), transparent 30%),
+      linear-gradient(135deg, #f4f3ee 0%, #b5c3df 42%, #001b79 100%);
+  }
+
+  .status-stamp {
+    @apply rotate-[-4deg] rounded-full border-2 px-5 py-2 font-mono text-sm uppercase tracking-[0.18em];
+  }
+
+  .status-strong {
+    @apply border-ink bg-paper text-ink;
+  }
+
+  .status-reorder {
+    @apply border-ink bg-accentSoft text-ink;
+  }
+
+  .status-shift {
+    @apply border-ink bg-mist text-ink;
+  }
+
+  .status-unstable {
+    @apply border-ink/40 bg-paper text-ink/70;
+  }
+}
+
+@keyframes base-gradient-shift {
+  0% {
+    background-position: 0% 42%;
+  }
+
+  50% {
+    background-position: 82% 58%;
+  }
+
+  100% {
+    background-position: 100% 35%;
+  }
+}
+
+@keyframes gradient-flow-a {
+  0% {
+    transform: translate3d(-8%, -5%, 0) scale(1) rotate(0deg);
+  }
+
+  50% {
+    transform: translate3d(8%, 7%, 0) scale(1.12) rotate(8deg);
+  }
+
+  100% {
+    transform: translate3d(3%, -10%, 0) scale(1.2) rotate(-6deg);
+  }
+}
+
+@keyframes gradient-flow-b {
+  0% {
+    transform: translate3d(8%, 10%, 0) scale(1.12) rotate(0deg);
+  }
+
+  50% {
+    transform: translate3d(-9%, -6%, 0) scale(1.02) rotate(-10deg);
+  }
+
+  100% {
+    transform: translate3d(-4%, 8%, 0) scale(1.18) rotate(6deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flowing-bg::before,
+  .flowing-bg::after {
+    animation: none;
+  }
+
+  .flowing-bg {
+    animation: none;
+  }
+}

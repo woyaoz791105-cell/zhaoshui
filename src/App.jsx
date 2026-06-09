@@ -31,6 +31,31 @@ import {
 
 const STORAGE_KEY = 'zhaoshui.currentUser.v1'
 
+const ABILITY_FILTER_OPTIONS = [
+  '用户研究',
+  '资料整理',
+  '访谈记录',
+  '案例分析',
+  'PPT结构',
+  '视觉排版',
+  '原型制作',
+  '汇报表达',
+  '视频剪辑',
+  '代码实现',
+  '模型制作',
+  '流程图',
+]
+
+const DURATION_FILTER_OPTIONS = ['一周', '一月', '三月', '半年', '更长']
+
+const COLLABORATION_MODE_OPTIONS = ['线上', '线下', '线上线下均可']
+
+const emptyPeopleFilters = () => ({
+  abilityTags: [],
+  durationTags: [],
+  collaborationModes: [],
+})
+
 const emptyAnswers = () => Array(QUESTIONS.length).fill(null)
 
 const defaultSelfNotes = {
@@ -146,6 +171,10 @@ function createProfileFromAnswers(answers) {
     answers,
     initialScores,
     initialCode,
+    abilityTags: [],
+    durationTags: [],
+    collaborationMode: '',
+    personalTags: [],
     selfNotes: defaultSelfNotes,
     projects: [createDefaultProject()],
     peerReviews: [],
@@ -427,47 +456,226 @@ function HomePage({ hasProfile, onOpenExisting, onStart }) {
 }
 
 function PeopleSeaPage({ onOpenProfile, profiles }) {
+  const [filters, setFilters] = useState(() => emptyPeopleFilters())
+  const filteredProfiles = useMemo(
+    () => profiles.filter((profile) => matchesPeopleFilters(profile, filters)),
+    [filters, profiles],
+  )
+  const hasFilters = Object.values(filters).some((values) => values.length > 0)
+
+  const toggleFilter = (group, value) => {
+    setFilters((previous) => {
+      const selectedValues = previous[group]
+      const nextValues = selectedValues.includes(value)
+        ? selectedValues.filter((item) => item !== value)
+        : [...selectedValues, value]
+
+      return { ...previous, [group]: nextValues }
+    })
+  }
+
   return (
     <section className="grid gap-5">
-      <article className="rounded-[34px] border border-ink bg-paper/85 p-6 shadow-card md:p-8">
-        <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate">People Sea</p>
-        <h2 className="mt-3 font-sans text-5xl font-bold leading-tight text-ink">人海</h2>
+      <article className="rounded-[34px] border border-ink bg-paper/85 p-5 shadow-card md:p-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate">People Sea</p>
+            <h2 className="mt-2 font-sans text-4xl font-bold leading-tight text-ink md:text-5xl">人海</h2>
+          </div>
+          <div className="flex items-center gap-3 text-xs text-slate">
+            <span>{filteredProfiles.length} / {profiles.length} 个协作对象</span>
+            <button
+              className="rounded-full border border-ink/20 bg-white/50 px-4 py-2 text-xs font-bold text-ink transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={!hasFilters}
+              onClick={() => setFilters(emptyPeopleFilters())}
+              type="button"
+            >
+              重置筛选
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-3">
+          <PeopleFilterGroup
+            label="可参与任务"
+            onToggle={(value) => toggleFilter('abilityTags', value)}
+            options={ABILITY_FILTER_OPTIONS}
+            selected={filters.abilityTags}
+          />
+          <PeopleFilterGroup
+            label="可接受项目时长"
+            onToggle={(value) => toggleFilter('durationTags', value)}
+            options={DURATION_FILTER_OPTIONS}
+            selected={filters.durationTags}
+          />
+          <PeopleFilterGroup
+            label="合作形式"
+            onToggle={(value) => toggleFilter('collaborationModes', value)}
+            options={COLLABORATION_MODE_OPTIONS}
+            selected={filters.collaborationModes}
+          />
+        </div>
       </article>
 
-      <div className="grid gap-5 md:grid-cols-3">
-        {profiles.map((profile) => (
-          <button
-            className="group rounded-[30px] border border-ink bg-paper/85 p-5 text-left shadow-card transition hover:-translate-y-1 hover:bg-accentSoft"
-            key={profile.id}
-            onClick={() => onOpenProfile(profile.id)}
-            type="button"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm text-slate">{profile.name}</p>
-                <h3 className="mt-3 font-sans text-5xl font-bold leading-none text-ink">{profile.updatedCode} 型</h3>
-              </div>
-              <span className={`status-stamp scale-75 ${profile.status.tone ? `status-${profile.status.tone}` : ''}`}>
-                {profile.status.label}
-              </span>
-            </div>
-            <p className="mt-5 text-sm leading-7 text-olive">{getDimensionExplanation(profile.updatedCode)}较高</p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {profile.updatedAuxiliaryRoles.map((role) => (
-                <RolePill key={role.id} role={role} />
-              ))}
-            </div>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {profile.reviewTags.slice(0, 4).map((tag) => (
-                <span key={tag.label} className="rounded-full border border-ink bg-white/65 px-3 py-1 text-xs text-ink">
-                  {tag.label}
-                </span>
-              ))}
-            </div>
-          </button>
+      {filteredProfiles.length ? (
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {filteredProfiles.map((profile) => (
+            <PeopleCard key={profile.id} onOpenProfile={onOpenProfile} profile={profile} />
+          ))}
+        </div>
+      ) : (
+        <article className="rounded-[30px] border border-dashed border-ink/20 bg-paper/75 p-10 text-center shadow-card">
+          <p className="text-sm font-bold text-slate">暂时没有找到合适的协作对象。</p>
+        </article>
+      )}
+    </section>
+  )
+}
+
+function matchesPeopleFilters(profile, filters) {
+  const abilityMatched = matchAny(profile.abilityTags, filters.abilityTags)
+  const durationMatched = matchAny(profile.durationTags, filters.durationTags)
+  const modeMatched = matchCollaborationMode(profile.collaborationMode, filters.collaborationModes)
+
+  return abilityMatched && durationMatched && modeMatched
+}
+
+function matchAny(values = [], selectedValues = []) {
+  if (!selectedValues.length) return true
+  return selectedValues.some((value) => values.includes(value))
+}
+
+function matchCollaborationMode(mode = '', selectedModes = []) {
+  if (!selectedModes.length) return true
+
+  return selectedModes.some((selectedMode) => {
+    if (selectedMode === '线上') return mode === '线上' || mode === '线上线下均可'
+    if (selectedMode === '线下') return mode === '线下' || mode === '线上线下均可'
+    return mode === selectedMode
+  })
+}
+
+function PeopleFilterGroup({ label, onToggle, options, selected }) {
+  return (
+    <section className="grid gap-2 md:grid-cols-[7.5rem_1fr] md:items-start">
+      <p className="pt-1 text-xs font-bold text-slate">{label}</p>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <FilterChip key={option} onClick={() => onToggle(option)} selected={selected.includes(option)}>
+            {option}
+          </FilterChip>
         ))}
       </div>
     </section>
+  )
+}
+
+function FilterChip({ children, onClick, selected }) {
+  return (
+    <button
+      className={`rounded-full border px-3.5 py-1.5 text-xs font-bold transition hover:-translate-y-0.5 ${
+        selected
+          ? 'border-[#06102a] bg-[#06102a] text-white shadow-sticker'
+          : 'border-ink/10 bg-white/35 text-ink hover:border-ink/30 hover:bg-white/60'
+      }`}
+      onClick={onClick}
+      type="button"
+    >
+      {children}
+    </button>
+  )
+}
+
+function PeopleCard({ onOpenProfile, profile }) {
+  const code = profile.code ?? profile.updatedCode ?? profile.comprehensiveCode
+  const dimensions = profile.dimensions ?? getCodeDimensions(code).map((dimension) => dimension.name)
+  const keywords = profile.keywords ?? []
+  const personalTags = profile.personalTags ?? []
+  const abilityTags = profile.abilityTags ?? []
+  const durationTags = profile.durationTags ?? []
+  const projectCount = profile.projectCount ?? profile.projects.length
+  const reviewCount = profile.reviewCount ?? profile.allProjectReviews.length
+  const latestProject = profile.latestProject ?? profile.projects[0]?.name ?? '暂无项目'
+
+  return (
+    <button
+      className="group rounded-[30px] border border-ink/20 bg-paper/85 p-5 text-left shadow-card transition hover:-translate-y-1 hover:border-ink hover:bg-white/80"
+      onClick={() => onOpenProfile(profile.id)}
+      type="button"
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink bg-white/75 text-lg font-black text-ink">
+            {profile.name.slice(0, 1)}
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-lg font-bold text-ink">{profile.name}</p>
+            <p className="mt-1 truncate text-xs text-slate">{profile.major}</p>
+          </div>
+        </div>
+        <span className="rounded-full border border-ink bg-white/70 px-3 py-1.5 font-mono text-sm font-bold text-ink">
+          {code} 型
+        </span>
+      </div>
+
+      <p className="mt-4 text-sm font-bold text-olive">{dimensions.slice(0, 3).join(' / ')}</p>
+
+      <TagRow className="mt-4" tags={keywords.slice(0, 3)} variant="quiet" />
+      <TagRow className="mt-3" tags={personalTags.slice(0, 3)} variant="accent" />
+
+      <div className="mt-5 rounded-[22px] border border-ink/10 bg-white/40 p-4">
+        <p className="text-[11px] font-bold text-slate">可参与任务</p>
+        <TagRow className="mt-2" tags={abilityTags.slice(0, 4)} variant="outline" />
+        <div className="mt-4 grid gap-3 text-xs text-slate sm:grid-cols-2">
+          <div>
+            <p className="font-bold text-ink">可接受时长</p>
+            <p className="mt-1">{durationTags.join(' / ') || '暂未设置'}</p>
+          </div>
+          <div>
+            <p className="font-bold text-ink">合作形式</p>
+            <p className="mt-1">{profile.collaborationMode || '暂未设置'}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
+        <MiniStat label="参与项目" value={`${projectCount} 个`} />
+        <MiniStat label="收到评价" value={`${reviewCount} 条`} />
+      </div>
+
+      <div className="mt-4 rounded-[22px] border border-ink/10 bg-paper/65 p-4">
+        <p className="text-[11px] font-bold text-slate">最近项目</p>
+        <p className="mt-1 truncate text-sm font-bold text-ink">{latestProject}</p>
+        <p className="mt-3 line-clamp-2 text-xs leading-6 text-slate">{profile.reason}</p>
+      </div>
+    </button>
+  )
+}
+
+function TagRow({ className = '', tags = [], variant = 'quiet' }) {
+  const variantClass = {
+    accent: 'border-[#06102a] bg-[#06102a] text-white',
+    outline: 'border-ink/15 bg-white/45 text-ink',
+    quiet: 'border-ink/10 bg-paper/70 text-slate',
+  }[variant]
+
+  return (
+    <div className={`flex flex-wrap gap-2 ${className}`}>
+      {tags.map((tag) => (
+        <span key={tag} className={`rounded-full border px-3 py-1 text-xs font-bold ${variantClass}`}>
+          {tag}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function MiniStat({ label, value }) {
+  return (
+    <div className="rounded-2xl border border-ink/10 bg-white/45 p-3">
+      <p className="text-[11px] font-bold text-slate">{label}</p>
+      <p className="mt-1 font-mono text-sm font-bold text-ink">{value}</p>
+    </div>
   )
 }
 
@@ -850,6 +1058,8 @@ function ProfilePage({
           </div>
         </section>
       </article>
+
+      <MySkillsSection profile={profile} />
 
       <ProjectSection
         isSample={isSample}
@@ -1489,6 +1699,56 @@ function MiniReport({ title, value }) {
       <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate">{title}</p>
       <p className="mt-3 font-sans text-3xl font-bold text-ink">{value}</p>
     </section>
+  )
+}
+
+function MySkillsSection({ profile }) {
+  const abilityTags = profile.abilityTags ?? []
+  const durationTags = profile.durationTags ?? []
+  const collaborationMode = profile.collaborationMode || '暂未设置'
+
+  return (
+    <section className="rounded-[34px] border border-ink/20 bg-paper/85 p-6 shadow-card md:p-8">
+      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-slate">
+            MY COLLABORATION SKILLS
+          </p>
+          <h3 className="mt-2 text-2xl font-bold text-ink">我的能力</h3>
+        </div>
+        <span className="rounded-full border border-ink/15 bg-white/45 px-3 py-1 text-xs font-bold text-slate">
+          这个人能参与什么
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-4">
+        <SkillTagBlock label="可参与任务" tags={abilityTags} variant="accent" />
+        <div className="grid gap-4 md:grid-cols-[1fr_220px]">
+          <SkillTagBlock label="可接受项目时长" tags={durationTags} variant="outline" />
+          <div className="rounded-[22px] border border-ink/10 bg-white/40 p-4">
+            <p className="text-xs font-bold text-slate">合作形式</p>
+            <span className="mt-3 inline-flex rounded-full border border-ink/15 bg-white/55 px-3 py-1.5 text-xs font-bold text-ink">
+              {collaborationMode}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function SkillTagBlock({ label, tags = [], variant = 'outline' }) {
+  return (
+    <div className="rounded-[22px] border border-ink/10 bg-white/40 p-4">
+      <p className="text-xs font-bold text-slate">{label}</p>
+      {tags.length ? (
+        <TagRow className="mt-3" tags={tags} variant={variant} />
+      ) : (
+        <span className="mt-3 inline-flex rounded-full border border-dashed border-ink/20 bg-paper/70 px-3 py-1.5 text-xs font-bold text-slate">
+          暂未设置
+        </span>
+      )}
+    </div>
   )
 }
 

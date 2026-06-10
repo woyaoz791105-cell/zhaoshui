@@ -96,72 +96,163 @@ button:disabled {
   }
 
   .site-header {
-    @apply sticky top-0 z-20 px-3 pb-5 pt-2 md:px-4;
+    @apply sticky top-0 z-20 pb-6 pt-3;
+    width: calc(100vw - 2rem);
+    margin-left: calc(50% - 50vw + 1rem);
+    padding-left: clamp(1.5rem, 5vw, 5rem);
+    padding-right: clamp(1.5rem, 5vw, 5rem);
   }
 
   .brand-title {
-    @apply inline-flex items-baseline gap-2 justify-self-start text-2xl font-black leading-none text-ink transition hover:opacity-60;
+    @apply inline-flex items-baseline gap-3 justify-self-start text-[2rem] font-black leading-none text-ink transition hover:opacity-60 md:text-[2.25rem];
   }
 
   .brand-title-en {
-    @apply font-sans text-[10px] font-bold tracking-[0.08em] text-slate;
+    @apply font-sans text-sm font-bold tracking-[0.08em] text-slate;
   }
 
   .nav-link {
-    @apply text-sm font-normal text-ink transition hover:opacity-55;
+    @apply relative pb-2 text-lg font-normal text-ink transition hover:opacity-55;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    border-radius: 999px;
+    background: #0030a8;
+    transform: translateX(-50%);
+    transition: width 180ms ease;
+  }
+
+  .nav-link-active {
+    @apply font-bold text-accentDeep hover:opacity-100;
+  }
+
+  .nav-link-active::after {
+    width: 2.2rem;
   }
 
   .home-hero {
-    @apply flex min-h-[72vh] items-center px-3 pb-12 pt-10 md:min-h-[76vh] md:px-4;
+    @apply flex min-h-[calc(100vh-6rem)] items-center pb-8 pt-0;
+    width: calc(100vw - 2rem);
+    margin-left: calc(50% - 50vw + 1rem);
   }
 
   .home-stage {
-    @apply w-full;
+    @apply relative flex min-h-[calc(100vh-8rem)] w-full items-start overflow-hidden rounded-[38px] py-10;
+    padding-left: clamp(2rem, 9vw, 10.5rem);
+    padding-right: clamp(2rem, 7vw, 8rem);
   }
 
   .home-copy {
-    @apply w-full;
+    @apply relative z-10 w-full max-w-[31rem] xl:max-w-[34rem];
+    transform: none;
+  }
+
+  .home-kicker {
+    @apply mb-8 text-sm font-black tracking-[0.12em] text-ink md:text-base;
   }
 
   .home-title {
-    @apply grid w-full grid-cols-[auto_1fr] items-end gap-x-5 text-[4.2rem] font-black leading-none tracking-[-0.06em] text-ink md:text-[5.9rem] lg:text-[6.8rem];
-    text-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    @apply flex flex-col text-[3.25rem] font-normal uppercase leading-[1.02] tracking-[-0.09em] text-ink md:text-[4.45rem] lg:text-[5.15rem] xl:text-[5.65rem];
+    font-family: "Bahnschrift", "Aptos Display", "Segoe UI Variable Display", "Avenir Next", "Helvetica Neue", sans-serif;
+    font-stretch: 88%;
+    font-variation-settings: "wdth" 86, "wght" 430;
+    text-shadow: 0 12px 24px rgba(0, 30, 105, 0.08);
   }
 
-  .home-title-en {
-    @apply justify-self-end pb-1 font-sans text-3xl font-black tracking-[0.04em] text-ink md:pb-2 md:text-5xl lg:text-6xl;
-    text-shadow: none;
+  .home-title-accent {
+    @apply text-accentDeep;
   }
 
-  .home-subtitle {
-    @apply mt-7 max-w-[28rem] text-left text-base font-bold leading-relaxed tracking-[0.03em] text-ink md:text-lg;
+  .home-cn-subtitle {
+    @apply mt-1 font-sans text-[1.8rem] font-black leading-[1.32] tracking-[-0.04em] text-ink md:text-[2.3rem] lg:text-[2.65rem] xl:text-[2.9rem];
   }
 
-  .home-subtitle-en {
-    @apply mt-1 font-sans text-[11px] font-bold tracking-[0.04em] text-slate md:text-xs;
+  .home-cn-subtitle span {
+    @apply text-accentDeep;
   }
 
-  .home-actions {
-    @apply mt-12 flex flex-col gap-5 sm:flex-row;
+  .home-orbit-cluster {
+    @apply relative z-10 mt-10 flex flex-wrap gap-5 md:gap-7 lg:absolute lg:mt-0;
+    left: auto;
+    top: auto;
   }
 
-  .home-button {
-    @apply inline-flex min-w-56 items-center justify-between rounded-[1.4rem] border px-8 py-5 text-xl font-bold whitespace-nowrap transition hover:-translate-y-0.5;
+  .home-orbit {
+    @apply flex h-28 w-28 flex-col items-center justify-center gap-3 rounded-full border border-white/60 bg-white/55 text-base font-black text-ink shadow-card backdrop-blur-xl transition duration-300 ease-out hover:-translate-y-2 hover:scale-110 hover:bg-white/80 md:h-32 md:w-32 md:text-lg xl:h-36 xl:w-36 xl:text-xl;
+    box-shadow: 0 18px 45px rgba(0, 30, 105, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    animation: orbit-float 3.2s ease-in-out infinite alternate;
   }
 
-  .home-button-primary {
-    @apply border-white/35 bg-[#06102a]/90 text-white shadow-card backdrop-blur-md hover:bg-[#10256e];
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 18px 44px rgba(0, 23, 95, 0.28);
+  .home-orbit-cluster {
+    left: clamp(43rem, 56vw, 70rem);
+    top: 48%;
   }
 
-  .home-button-secondary {
-    @apply border-white/50 text-ink backdrop-blur-md hover:border-white/80;
-    background: rgba(255, 255, 255, 0.22);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 16px 38px rgba(0, 23, 95, 0.14);
+  .home-orbit-profile {
+    @apply bg-white/45;
   }
 
-  .home-button-secondary:hover {
-    background: rgba(255, 255, 255, 0.38);
+  .home-orbit-sea {
+    @apply bg-white/60;
+    --orbit-float-offset: 2.6rem;
+    animation-delay: -1.3s;
+  }
+
+  .home-orbit-sea:hover {
+    transform: translateY(1.8rem) scale(1.1);
+  }
+
+  .home-orbit-icon {
+    @apply text-3xl leading-none tracking-[-0.45em] text-accentDeep md:text-4xl;
+    padding-right: 0.35em;
+  }
+
+  .home-giant-word {
+    @apply pointer-events-none absolute top-8 hidden select-none font-black leading-[0.8] tracking-[-0.1em] text-white/40 lg:block;
+    right: clamp(-5rem, -3vw, -2rem);
+    writing-mode: vertical-rl;
+    font-size: clamp(7.5rem, 15vw, 18rem);
+  }
+
+  @media (max-width: 1180px) {
+    .home-hero {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .home-stage {
+      padding-left: clamp(1.5rem, 6vw, 4rem);
+      padding-right: clamp(1.5rem, 6vw, 4rem);
+    }
+
+    .home-copy {
+      max-width: 32rem;
+    }
+
+    .home-orbit-cluster {
+      position: relative;
+      left: auto;
+      top: auto;
+      margin-top: 2.5rem;
+    }
+
+    .home-giant-word {
+      display: none;
+    }
+
+    .home-orbit-sea {
+      --orbit-float-offset: 0rem;
+    }
+
+    .home-orbit-sea:hover {
+      transform: translateY(-0.5rem) scale(1.1);
+    }
   }
 
   .btn-primary {
@@ -274,9 +365,20 @@ button:disabled {
   }
 }
 
+@keyframes orbit-float {
+  0% {
+    transform: translateY(var(--orbit-float-offset, 0rem));
+  }
+
+  100% {
+    transform: translateY(calc(var(--orbit-float-offset, 0rem) - 0.9rem));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .flowing-bg::before,
-  .flowing-bg::after {
+  .flowing-bg::after,
+  .home-orbit {
     animation: none;
   }
 

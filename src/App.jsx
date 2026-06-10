@@ -279,6 +279,7 @@ function App() {
     <main className="flowing-bg min-h-screen px-4 py-5 text-ink md:px-8 md:py-8">
       <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-5">
         <AppHeader
+          activeView={view}
           onHome={() => setView('home')}
           onOpenProfile={() => setView(currentProfile ? 'profile' : 'sea')}
           onOpenSea={() => setView('sea')}
@@ -288,6 +289,7 @@ function App() {
           <HomePage
             hasProfile={Boolean(currentProfile)}
             onOpenExisting={() => setView(currentProfile ? 'profile' : 'sea')}
+            onOpenSea={() => setView('sea')}
             onStart={startQuiz}
           />
         )}
@@ -399,7 +401,9 @@ function App() {
   )
 }
 
-function AppHeader({ onHome, onOpenProfile, onOpenSea }) {
+function AppHeader({ activeView, onHome, onOpenProfile, onOpenSea }) {
+  const currentNav = getActiveNav(activeView)
+
   return (
     <header className="site-header">
       <div className="grid items-center gap-4 md:grid-cols-[auto_1fr]">
@@ -408,14 +412,18 @@ function AppHeader({ onHome, onOpenProfile, onOpenSea }) {
           <span className="brand-title-en">WhoTo</span>
         </button>
 
-        <nav className="flex items-center justify-start gap-8 md:justify-end">
-          <button className="nav-link" onClick={onHome} type="button">
+        <nav className="flex items-center justify-start gap-8 md:justify-end md:gap-12 lg:gap-16">
+          <button className={`nav-link ${currentNav === 'home' ? 'nav-link-active' : ''}`} onClick={onHome} type="button">
             首页
           </button>
-          <button className="nav-link" onClick={onOpenSea} type="button">
+          <button className={`nav-link ${currentNav === 'sea' ? 'nav-link-active' : ''}`} onClick={onOpenSea} type="button">
             人海
           </button>
-          <button className="nav-link" onClick={onOpenProfile} type="button">
+          <button
+            className={`nav-link ${currentNav === 'profile' ? 'nav-link-active' : ''}`}
+            onClick={onOpenProfile}
+            type="button"
+          >
             当前用户
           </button>
         </nav>
@@ -424,31 +432,52 @@ function AppHeader({ onHome, onOpenProfile, onOpenSea }) {
   )
 }
 
-function HomePage({ hasProfile, onOpenExisting, onStart }) {
+function getActiveNav(view) {
+  if (view === 'home' || view === 'quiz' || view === 'initial-result' || view === 'self-notes') {
+    return 'home'
+  }
+
+  if (view === 'sea' || view === 'sample' || view === 'chat') {
+    return 'sea'
+  }
+
+  return 'profile'
+}
+
+function HomePage({ hasProfile, onOpenExisting, onOpenSea, onStart }) {
   return (
     <section className="home-hero">
       <div className="home-stage">
         <div className="home-copy">
-        <h1 className="home-title">
-          <span>找谁</span>
-          <span className="home-title-en">WhoTo</span>
-        </h1>
-
-        <div className="home-subtitle">
-          <p>小组合作的角色评价系统</p>
-          <p className="home-subtitle-en">A Role and Rating System for Student Collaboration</p>
+          <h1 className="home-title">
+            <span>Find</span>
+            <span>the right</span>
+            <span className="home-title-accent">teammates.</span>
+            <span>Make better</span>
+            <span>projects</span>
+            <span className="home-title-accent">together.</span>
+          </h1>
+          <div className="home-cn-subtitle">
+            <p>找对的人，</p>
+            <p>
+              一起把项目<span>做得更好。</span>
+            </p>
+          </div>
         </div>
 
-        <div className="home-actions">
-          <button className="home-button home-button-primary" onClick={onStart} type="button">
-            开始生成我的类型
-            <span aria-hidden="true">→</span>
+        <div className="home-orbit-cluster">
+          <button className="home-orbit home-orbit-profile" onClick={hasProfile ? onOpenExisting : onStart} type="button">
+            <span className="home-orbit-icon" aria-hidden="true">◆</span>
+            <span>我的档案</span>
           </button>
-          <button className="home-button home-button-secondary" onClick={onOpenExisting} type="button">
-            已有角色
-            <span aria-hidden="true">→</span>
+          <button className="home-orbit home-orbit-sea" onClick={onOpenSea} type="button">
+            <span className="home-orbit-icon" aria-hidden="true">●●</span>
+            <span>探索人海</span>
           </button>
         </div>
+
+        <div className="home-giant-word" aria-hidden="true">
+          WhoTo
         </div>
       </div>
     </section>
